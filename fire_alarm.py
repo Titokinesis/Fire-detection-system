@@ -2,8 +2,8 @@ import cv2
 import numpy as np
 import requests
 
-# Discord Webhook URL
-DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1553835941649448996/yIFXH6xmHzzNdxitAsQFrNTRVHORWg0F-GOY8au6PXmcwjJgY_JRcgwZKje1zVpvWhFS"
+# Discord Webhook URL 
+DISCORD_WEBHOOK_URL = "paste the URL from your discord server webhook"
 
 cap = cv2.VideoCapture(0)
 
@@ -20,18 +20,18 @@ while True:
     blur = cv2.GaussianBlur(frame, (11, 11), 0)
     hsv = cv2.cvtColor(blur, cv2.COLOR_BGR2HSV)
     
-    # Catch both deep red/orange and bright yellow/white-hot flames
-    # 1. Mask for the intense orange/red aura (High saturation, High brightness)
+    # This is to catch both deep red/orange and bright yellow/white-hot flames
+    # 1.Mask for the intense orange/red aura and color (High saturation, High brightness)
     lower_orange = np.array([0, 150, 200], dtype=np.uint8)
     upper_orange = np.array([35, 255, 255], dtype=np.uint8)
     mask_orange = cv2.inRange(hsv, lower_orange, upper_orange)
     
-    # 2. Mask for the white-hot core of the match (Low saturation, Max brightness)
+    # 2.Mask for the white-hot core of the match (Low saturation, Max brightness)
     lower_white = np.array([0, 0, 230], dtype=np.uint8)
     upper_white = np.array([179, 60, 255], dtype=np.uint8)
     mask_white = cv2.inRange(hsv, lower_white, upper_white)
     
-    # Combine both masks to get the full flame profile
+    #Combining both masks to get the full flame profile
     mask = cv2.bitwise_or(mask_orange, mask_white)
     contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     
@@ -49,7 +49,7 @@ while True:
         
         if fire_frames == ALARM_THRESHOLD and DISCORD_WEBHOOK_URL:
             print("Sending emergency alert...")
-            requests.post(DISCORD_WEBHOOK_URL, json={"content": "🚨 **FIRE DETECTED ON CAMERA **"})
+            requests.post(DISCORD_WEBHOOK_URL, json={"content": "🚨 **FIRE DETECTED ON CAMERA ! TAKE ACTIONS IMMEDIATELY ! **"})
             
         if fire_frames >= ALARM_THRESHOLD:
             cv2.putText(frame, "STATUS: ALARM ACTIVE", (30, 40), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 0, 255), 2)
